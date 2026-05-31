@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-# XSS-HUNTER - Advanced Cross-Site Scripting Scanner
+# SILENTSTRIKE-XSS - Advanced XSS Detection & Neutralization Platform
 # Author: aBadRoy
+# Unit: Indian Army · Cyber Special Forces
 # Requires: requests, beautifulsoup4
 # Optional: playwright (for headless browser verification)
 
